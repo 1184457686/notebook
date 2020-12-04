@@ -176,8 +176,6 @@ form.keepExtensions=xxx  xxx=true时代表保留后缀名  反之则不保留
 
 ### FormaData 文件上传图片及时预览
 
-
-
 ### formidable工具
 
 ```
