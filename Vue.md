@@ -119,8 +119,9 @@ props命名规则：在props中使用驼峰形式，模板中需要使用短横�
 
 ```
 单独的事件中心管理组件间的通信	 eg： var eventHUb = new Vue()
-监听事件与销毁事件		监听 eventHUb.$on('add-todo',addtodo) 销毁 eventHUb.$on('add-todo')
-触发事件					eventHUb.$emit('add-todo')
+监听事件与销毁事件		监听    eventHUb.$on('add-todo',addtodo)
+					  销毁    eventHUb.$off('add-todo')
+					  触发事件 eventHUb.$emit('add-todo')
 ```
 
 ### 插槽
@@ -391,8 +392,6 @@ const Bar = () => import ( /* webpackChunkName: "group-foo"* / './Bar.vue ')
 2、在后台项目导入证书
 ```
 
-
-
 #### 4.使用pm2管理应用 
 
 ```
@@ -402,5 +401,104 @@ const Bar = () => import ( /* webpackChunkName: "group-foo"* / './Bar.vue ')
 重启项目 pm2 restart 自定义名称
 停止项目 pm2 stop 自定义名称
 停止项目 pm2 delete 自定义名称
+```
+
+### VueX
+
+```
+什么数据适合存到vuex中
+	一般情况下，只有组件之间共享的数据，才有必要存储到vuex中;对于组件中的私有数据，依旧存		储在组件自身的data中即可。
+```
+
+#### 使用
+
+```
+安装		vuex npm install vuex --save
+导入 		import Vuex from 'vuex'
+创建store对象
+	const store = new Vuex.Store({
+		//state中存放的就是全局共享的数据
+		state:{count :0}
+	})
+将store对象挂载到vue实例
+	new Vue({
+	....
+	store
+	})
+```
+
+#### 核心概念
+
+##### state
+
+```
+state 提供唯一的公共数据源，所有共享的数据都要统一放到Store的 State 中进行存储。
+访问state数据
+	方案一: this.$store.state.xxx
+	方案二(利用mapState函数):
+			导入mapState  
+				import {mapState} from 'vuex'
+			通过刚才导入的mapState函数，将当前组件需要的全局数据，映射为当前组件的					computed计算属性：
+				computed:{
+				mapState(['xxx']) xxx为state里的属性值
+				}
+```
+
+##### Mutations
+
+```
+用于变更Store中的数据
+	只能通过mutation变更Store数据，不可以直接操作Store 中的数据。
+	可以集中监控所有数据的变化
+使用：
+	new Vuex.Store({
+	mutations:{
+		add(state){
+		  //变更状态
+		  state.count++
+		}
+	}
+	})
+触发mutation
+ this.$store.commit('add',xxx) xxx为可选项  传入的值
+注意：mutations中的方法不能是异步方法 使用Action解决
+		只有mutation中的方法才能操作state
+```
+
+##### Actions
+
+```
+action定义：
+new Vuex.store({
+	actions:{
+		addNAsync(context,step){
+			...//方法中的一些异步操作
+			context.commit('xxx',step) xxx为mutation中的方法
+		}
+	}
+})
+触发 
+	方案一： dispatch	
+	methods:{
+		handle(){
+			this.$store.dispatch('xxx',5) xxx为mutation中的方法
+		}
+	}
+	方案二：使用mapActions
+			导入mapActions  
+			  import {mapActions} from 'vuex'
+		methods:{
+			...mapActions(['xxx'])  xxx为mutation中的方法
+		}
+	}
+```
+
+##### Getter
+
+```
+作用：对store中的数据进行加工处理形成新的数据
+使用
+	方案一： this.$store.getter.xxx   xxx为getter中的方法
+	方案二：mapGetters方法  使用方法和mapActions类似
 ```
 
